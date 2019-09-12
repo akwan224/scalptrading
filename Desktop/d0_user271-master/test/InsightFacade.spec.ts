@@ -64,7 +64,111 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
+    });
 
+    it("Should reject an invalid dataset id with underscore", function () {
+        const id: string = "___courses____";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail(result, expected, "Should have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Adding a just removed dataset", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        insightFacade.removeDataset(id);
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail(result, expected, "Should have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Should reject id with whitespace only", function () {
+        const id: string = "   ";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail(result, expected, "Should have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Should reject an dataset id thats already added", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail(result, expected, "Should have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Should reject an invalid dataset datatype", function () {
+        const id: any = 100;
+        const expected: any = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail(result, expected, "Should have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Should remove a valid dataset", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        return insightFacade.removeDataset(id).then((result: string) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });
+
+    it("Should not remove a not added dataset", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        return insightFacade.removeDataset(id).then((result: string) => {
+            expect.fail(result, expected, "Should not have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Should not remove an already removed dataset", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        insightFacade.removeDataset(id);
+        return insightFacade.removeDataset(id).then((result: string) => {
+            expect.fail(result, expected, "Should not have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+
+    it("Should not remove id has underscore", function () {
+        const id: string = "___courses___";
+        const expected: string[] = [id];
+        return insightFacade.removeDataset(id).then((result: string) => {
+            expect.fail(result, expected, "Should not have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
+    });
+    it("Should not remove id has only whitespace", function () {
+        const id: string = "  ";
+        const expected: string[] = [id];
+        return insightFacade.removeDataset(id).then((result: string) => {
+            expect.fail(result, expected, "Should not have rejected");
+        }).catch((err: any) => {
+            expect(err).to.deep.equal(expected);
+        });
     });
 });
 
